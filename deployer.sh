@@ -43,7 +43,8 @@ for repo_info in "${REPOSITORIES[@]}"; do
 
         # Sleep for 5 seconds
         sleep 5
-
+        git config --global --add safe.directory $local_dir
+        sleep 5
         # Trigger the redeploy script with sudo
         sudo ./redeploy.sh
     else
