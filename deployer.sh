@@ -2,8 +2,8 @@
 
 # Define an array of repositories and their local directories
 REPOSITORIES=(
-    "https://github.com/labyrinthglobalsolutions/lgs-frontend.git:/home/ubuntu/deploy/lgs-frontend"
-    "https://github.com/labyrinthglobalsolutions/lgs-backend.git:/home/ubuntu/deploy/lgs-backend"
+    "https://github.com/labyrinthglobalsolutions/lgs-frontend.git::/home/ubuntu/deploy/lgs-frontend"
+    "https://github.com/labyrinthglobalsolutions/lgs-backend.git::/home/ubuntu/deploy/lgs-backend"
     # Add more repositories as needed
 )
 
@@ -18,7 +18,7 @@ exec > >(tee -a "$LOG_DIR/script_log.txt") 2>&1
 
 # Loop through each repository and perform actions
 for repo_info in "${REPOSITORIES[@]}"; do
-    IFS=':' read -ra repo_data <<< "$repo_info"
+    IFS='::' read -ra repo_data <<< "$repo_info"
     repo_url="${repo_data[0]}"
     local_dir="${repo_data[1]}"
 
