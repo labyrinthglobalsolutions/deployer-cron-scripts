@@ -78,7 +78,6 @@ for repo_info in "${REPOSITORIES[@]}"; do
         else
             echo "Image not found for tag $tag"
         fi
-        continue
         
     else
         echo "$repo_url: No changes detected."
