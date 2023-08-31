@@ -72,7 +72,7 @@ for repo_info in "${REPOSITORIES[@]}"; do
         git pull origin main
         echo "$repo_url: Pull complete."
 
-        check_image "$tag" "$local_dir"
+        check_image "$latest_commit" "$local_dir"
         if [ $? -eq 0 ]; then
             echo "Continuing with the next iteration of the parent loop..."
         else
