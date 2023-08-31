@@ -7,6 +7,8 @@ REPOSITORIES=(
     # Add more repositories as needed
 )
 
+QUAY_ORG="labyrinthglobalsolutions"
+
 # Set the log directory
 LOG_DIR="/home/ubuntu/deploy/logs"
 
@@ -41,12 +43,34 @@ for repo_info in "${REPOSITORIES[@]}"; do
         git pull origin main
         echo "$repo_url: Pull complete."
 
-        # Sleep for 5 seconds
-        sleep 5
-        git config --global --add safe.directory $local_dir
-        sleep 5
-        # Trigger the redeploy script with sudo
-        sudo ./redeploy.sh
+        tag=$latest_commit
+        timeout=$((15 * 60))  # 30 minutes in seconds
+        elapsed_time=0
+        quay_repo=$(basename "$local_dir")
+        quay_api="https://quay.io/api/v1/repository/$QUAY_ORG/$quay_repo/tag/?onlyActiveTags=true"
+
+        while [ $elapsed_time -lt $timeout ]; do
+            response=$(curl -s "$quay_api")
+            image_found=$(echo "$response" | jq -r ".tags[] | select(.name == \"$tag\")")
+
+            if [ -n "$image_found" ]; then
+                echo "Docker image found for tag $tag"
+                 # Sleep for 5 seconds
+                git config --global --add safe.directory $local_dir
+                sleep 5
+                # Trigger the redeploy script with sudo
+                sudo ./redeploy.sh
+
+            else
+                echo "Docker image not found for tag $tag. Waiting for 2 minutes..."
+                sleep 120  # Wait for 2 minutes
+                elapsed_time=$((elapsed_time + 120))
+            fi
+        done
+
+        echo "Timeout reached. Docker image not found for tag $tag on Quay.io after 30 minutes."
+        exit 1
+        
     else
         echo "$repo_url: No changes detected."
     fi
