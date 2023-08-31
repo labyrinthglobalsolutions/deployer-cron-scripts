@@ -2,7 +2,7 @@
 
 # Define an array of repositories and their local directories
 REPOSITORIES=(
-    "https://github.com/labyrinthglobalsolutions/lgs-frontend.git://home/ubuntu/deploy/lgs-frontend"
+    "https://github.com/labyrinthglobalsolutions/lgs-frontend.git:/home/ubuntu/deploy/lgs-frontend"
     "https://github.com/labyrinthglobalsolutions/lgs-backend.git:/home/ubuntu/deploy/lgs-backend"
     # Add more repositories as needed
 )
@@ -33,13 +33,13 @@ for repo_info in "${REPOSITORIES[@]}"; do
     git fetch origin
 
     # Get the latest commit hash from the remote repository
-    latest_commit=$(git rev-parse origin/master)
+    latest_commit=$(git rev-parse origin/main)
 
     # Compare the commit hashes to check for changes
     if [ "$current_commit" != "$latest_commit" ]; then
         echo "Changes detected. Pulling the latest changes..."
-        git pull origin master
-        echo "Pull complete."
+        git pull origin main
+        echo "$repo_url: Pull complete."
 
         # Sleep for 5 seconds
         sleep 5
@@ -47,6 +47,6 @@ for repo_info in "${REPOSITORIES[@]}"; do
         # Trigger the redeploy script with sudo
         sudo ./redeploy.sh
     else
-        echo "No changes detected."
+        echo "$repo_url: No changes detected."
     fi
 done
