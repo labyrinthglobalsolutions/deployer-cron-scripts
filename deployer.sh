@@ -19,7 +19,7 @@ exec > >(tee -a "$LOG_DIR/script_log.txt") 2>&1
 # Loop through each repository and perform actions
 for repo_info in "${REPOSITORIES[@]}"; do
     IFS='|' read -ra repo_data <<< "$repo_info"
-    echo "$repo_data[1]"
+    echo "${repo_data[1]}"
     repo_url="${repo_data[0]}"
     local_dir="${repo_data[1]}"
 
